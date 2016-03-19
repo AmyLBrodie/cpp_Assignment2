@@ -5,8 +5,12 @@
  * Created on 18 March 2016, 2:15 PM
  */
 
+
 #ifndef IMAGE_MANIPULATION_H
 #define IMAGE_MANIPULATION_H
+
+#include <vector>
+#include <string>
 
 namespace BRDAMY004{
     class VolImage {
