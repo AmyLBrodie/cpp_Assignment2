@@ -105,7 +105,7 @@ namespace BRDAMY004{
     
     // Calculates the number of bytes required to store the image (including pointers)
     int VolImage::volImageSize(){
-        return (width*height*slices.size())*sizeof(char*);
+        return width * height * sizeof(char*) * sizeof(char**);
     }
     
     // Takes in a specific row number and then takes that row from each slice and writes
