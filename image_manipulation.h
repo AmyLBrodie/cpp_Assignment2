@@ -31,6 +31,8 @@ namespace BRDAMY004{
         void extract(int sliceId, std::string output_prefix);
 
         int volImageSize(void);
+        
+        void rowExtract(int rowId, std::string output_prefix);
     };
 }
 
