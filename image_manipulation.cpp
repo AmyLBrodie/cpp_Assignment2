@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <cmath>
 
 
 
@@ -35,13 +36,13 @@ namespace BRDAMY004{
             num = oss.str();
             std::string fileName = "raws/" + baseName + num + ".raw";
             //std::cout << fileName << std::endl;
-            std::ifstream rawFile(fileName.c_str(), std::ios::in | std::ios::binary);
+            std::ifstream rawFile(fileName.c_str(), /*std::ios::in |*/ std::ios::binary);
             if (!rawFile){
                 std::cerr << "File open failed!" << std::endl;
                 return false;
             }
             for (int j=0; j<height; j++){
-                rows[j] = new unsigned char [width];
+                rows[j] = new unsigned char [width*height];
                 for (int k=0; k<width; k++){
                     rawFile >> rows[j][k]; 
                 }
@@ -51,11 +52,43 @@ namespace BRDAMY004{
     }
     
     void VolImage::diffmap(int sliceI, int sliceJ, std::string output_prefix) {
-        
+        std::string outputHeader = output_prefix + ".data";
+        std::string outputFile = output_prefix + ".raw";
+        std::ofstream fileHOutput (outputHeader.c_str());
+        std::ostringstream oss;
+        oss << width << " " << height;
+        std::string headerInfo;
+        headerInfo = oss.str() + " 1";
+        fileHOutput <<  headerInfo;
+        std::ofstream fileOutput(outputFile.c_str(), std::ios::out | std::ios::binary);
+        for (int i=0; i<height; i++){
+            for (int j=0; j<width; j++){
+                fileOutput << (unsigned char)(std::abs((float)slices[sliceI][i][j] - (float)slices[sliceJ][i][j])/2);
+            }
+            /*if (i < height-1){
+                fileOutput << std::endl;
+            }*/
+        }
     }
     
     void VolImage::extract(int sliceId, std::string output_prefix){
-        
+        std::string outputHeader = output_prefix + ".data";
+        std::string outputFile = output_prefix + ".raw";
+        std::ofstream fileHOutput (outputHeader.c_str());
+        std::ostringstream oss;
+        oss << width << " " << height;
+        std::string headerInfo;
+        headerInfo = oss.str() + " 1";
+        fileHOutput <<  headerInfo;
+        std::ofstream fileOutput(outputFile.c_str(), /*std::ios::out |*/ std::ofstream::binary);
+        for (int i=0; i<height; i++){
+            for (int j=0; j<width; j++){
+                fileOutput << slices[sliceId][i][j];
+            }
+            /*if (i < height-1){
+                fileOutput << std::endl;
+            }*/
+        }
     }
     
     int VolImage::volImageSize(){

@@ -29,6 +29,8 @@ int main(int argc, char** argv) {
             namePrefix = temp;
             
             volImage.readImages(namePrefix);
+            volImage.extract(2,"output");
+            //volImage.diffmap(2,3,"output");
         }
         else if (temp == "-x"){
             temp = string(argv[i+1]) + " " + string(argv[i+2]);
