@@ -29,19 +29,21 @@ int main(int argc, char** argv) {
             namePrefix = temp;
             
             volImage.readImages(namePrefix);
-            volImage.extract(2,"output");
+            //volImage.extract(2,"output");
             //volImage.diffmap(2,3,"output");
         }
         else if (temp == "-x"){
             temp = string(argv[i+1]) + " " + string(argv[i+2]);
             istringstream iss(temp);
             iss >> sliceI >> outputFile;
+            volImage.extract(sliceI, outputFile);
             break;
         }
         else if (temp == "-d"){
             temp = string(argv[i+1]) + " " + string(argv[i+2]) + " " + string(argv[i+3]);
             istringstream iss(temp);
             iss >> sliceI >> sliceJ >> outputFile;
+            volImage.diffmap(sliceI, sliceJ, outputFile);
             break;
         }
     }

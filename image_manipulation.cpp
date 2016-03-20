@@ -42,13 +42,17 @@ namespace BRDAMY004{
                 return false;
             }
             for (int j=0; j<height; j++){
-                rows[j] = new unsigned char [width*height];
-                for (int k=0; k<width; k++){
-                    rawFile >> rows[j][k]; 
-                }
+                rows[j] = new unsigned char [width];
+                rawFile.read(reinterpret_cast<char*>(rows[j]), width);
+                /*for (int k=0; k<width; k++){
+                    //rawFile >> rows[j][k]; 
+                }*/
             }
             slices.push_back(rows);
         }
+        std::cout << "Number of images: " << numImages << std::endl;
+        std::cout << "Number of bytes required: " << VolImage::volImageSize() << " bytes" << std::endl;
+        
     }
     
     void VolImage::diffmap(int sliceI, int sliceJ, std::string output_prefix) {
@@ -62,13 +66,17 @@ namespace BRDAMY004{
         fileHOutput <<  headerInfo;
         std::ofstream fileOutput(outputFile.c_str(), std::ios::out | std::ios::binary);
         for (int i=0; i<height; i++){
+            unsigned char * temp = new unsigned char [width];
             for (int j=0; j<width; j++){
-                fileOutput << (unsigned char)(std::abs((float)slices[sliceI][i][j] - (float)slices[sliceJ][i][j])/2);
+                temp[j] = (unsigned char)(std::abs((float)slices[sliceI][i][j] - (float)slices[sliceJ][i][j])/2);
+                //fileOutput << (unsigned char)(std::abs((float)slices[sliceI][i][j] - (float)slices[sliceJ][i][j])/2);
             }
+            fileOutput.write(reinterpret_cast<char*>(temp), width);
             /*if (i < height-1){
                 fileOutput << std::endl;
             }*/
         }
+        std::cout << "diffmap of slices " << sliceI << " and " << sliceJ << " written to file " << outputFile << std::endl;
     }
     
     void VolImage::extract(int sliceId, std::string output_prefix){
@@ -80,19 +88,21 @@ namespace BRDAMY004{
         std::string headerInfo;
         headerInfo = oss.str() + " 1";
         fileHOutput <<  headerInfo;
-        std::ofstream fileOutput(outputFile.c_str(), /*std::ios::out |*/ std::ofstream::binary);
+        std::ofstream fileOutput(outputFile.c_str(), /*std::ios::out |*/ std::ios::binary);
         for (int i=0; i<height; i++){
-            for (int j=0; j<width; j++){
+            fileOutput.write(reinterpret_cast<char*>(slices[sliceId][i]), width);
+            /*for (int j=0; j<width; j++){
                 fileOutput << slices[sliceId][i][j];
-            }
+            }*/
             /*if (i < height-1){
                 fileOutput << std::endl;
             }*/
         }
+        std::cout << "slice " << sliceId << " written to file " << outputFile << std::endl;
     }
     
     int VolImage::volImageSize(){
-        
+        return (width*height*slices.size())*sizeof(char**);
     }
     
     VolImage::~VolImage(){
